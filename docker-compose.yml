@@ -21,7 +21,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${TAG}
     container_name: elasticsearch
     environment: ['http.host=0.0.0.0', 'transport.host=127.0.0.1']
-    ports: ['127.0.0.1:9200:9200']
+    ports: ['9200:9200']
     networks: ['stack']
     volumes:
         - ./data/elastic/:/usr/share/elasticsearch/data/
@@ -29,7 +29,7 @@ services:
   kibana:
     image: docker.elastic.co/kibana/kibana:${TAG}
     container_name: kibana
-    ports: ['127.0.0.1:5601:5601']
+    ports: ['5601:5601']
     networks: ['stack']
     depends_on: ['elasticsearch']
 
@@ -42,7 +42,7 @@ services:
       - ./config/logstash/pipeline/:/usr/share/logstash/pipeline/
       - ./config/logstash/patterns/:/usr/share/logstash/patterns/
      # - ./config/logstash/GeoLiteCity.dat:/usr/share/logstash/GeoLiteCity.dat
-    ports: ['192.168.1.13:1514:1514/udp']
+    ports: ['1514:1514/udp']
     networks: ['stack']
     depends_on: ['elasticsearch']
         
@@ -56,14 +56,14 @@ services:
     # networks: ['stack']
     # depends_on: ['elasticsearch']
 
-  # filebeat:
-    # image: docker.elastic.co/beats/filebeat:${TAG}
-    # container_name: filebeat
-    # # If the host system has logs at "/var/log", mount them at "/mnt/log"
-    # # inside the container, where Filebeat can find them.
-    # # volumes: ['/var/log:/mnt/log:ro']
-    # networks: ['stack']
-    # depends_on: ['elasticsearch', 'setup_filebeat']
+   filebeat:
+     image: docker.elastic.co/beats/filebeat:${TAG}
+     container_name: filebeat
+     # If the host system has logs at "/var/log", mount them at "/mnt/log"
+     # inside the container, where Filebeat can find them.
+     volumes: ['/var/log:/mnt/log:ro']
+     networks: ['stack']
+     depends_on: ['elasticsearch', 'setup_filebeat']
 
   # heartbeat:
     # image: docker.elastic.co/beats/heartbeat:${TAG}
